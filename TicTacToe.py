@@ -28,7 +28,7 @@ def printBoard(board):
     print('\n'.join(lines))
     
 def isWinner(bo, le):
-    return (bo[7] == le and bo[8] == le and bo[9] == le) or (bo[4] == le and bo[5] == le and bo[6] == le) or(bo[1] == le and bo[2] == le and bo[3] == le) or(bo[1] == le and bo[4] == le and bo[7] == le) or(bo[2] == le and bo[5] == le and bo[8] == le) or(bo[3] == le and bo[6] == le and bo[9] == le) or(bo[1] == le and bo[5] == le and bo[9] == le) or(bo[3] == le and bo[5] == le and bo[7] == le)
+    return (bo[7] == le and bo[8] == le and bo[9] == le) or (bo[4] == le and bo[5] == le and bo[6] == le) or (bo[1] == le and bo[2] == le and bo[3] == le) or(bo[1] == le and bo[4] == le and bo[7] == le) or (bo[2] == le and bo[5] == le and bo[8] == le) or(bo[3] == le and bo[6] == le and bo[9] == le) or(bo[1] == le and bo[5] == le and bo[9] == le) or(bo[3] == le and bo[5] == le and bo[7] == le)
 
 # Function to handle click events
 def on_click(row, col):
@@ -226,7 +226,7 @@ window = tk.Tk()
 
 def resize_image(image_path):
     image = Image.open(image_path)
-    resized_image = image.resize((image_width, image_height), Image.ANTIALIAS)
+    resized_image = image.resize((image_width, image_height), Image.LANCZOS)
     return ImageTk.PhotoImage(resized_image)
 
 def update_display():

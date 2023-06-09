@@ -13,19 +13,19 @@ def insertLetter(letter, pos):
 
 def spaceIsFree(pos):
     return board[pos] == ' '
-
 def printBoard(board):
-    print('   |   |')
-    print(' ' + board[1] + ' | ' + board[2] + ' | ' + board[3])
-    print('   |   |')
-    print('-----------')
-    print('   |   |')
-    print(' ' + board[4] + ' | ' + board[5] + ' | ' + board[6])
-    print('   |   |')
-    print('-----------')
-    print('   |   |')
-    print(' ' + board[7] + ' | ' + board[8] + ' | ' + board[9])
-    print('   |   |')
+    lines = ['   |   |',
+             f' {board[1]} | {board[2]} | {board[3]}',
+             '   |   |',
+             '-----------',
+             '   |   |',
+             f' {board[4]} | {board[5]} | {board[6]}',
+             '   |   |',
+             '-----------',
+             '   |   |',
+             f' {board[7]} | {board[8]} | {board[9]}',
+             '   |   |']
+    print('\n'.join(lines))
     
 def isWinner(bo, le):
     return (bo[7] == le and bo[8] == le and bo[9] == le) or (bo[4] == le and bo[5] == le and bo[6] == le) or(bo[1] == le and bo[2] == le and bo[3] == le) or(bo[1] == le and bo[4] == le and bo[7] == le) or(bo[2] == le and bo[5] == le and bo[8] == le) or(bo[3] == le and bo[6] == le and bo[9] == le) or(bo[1] == le and bo[5] == le and bo[9] == le) or(bo[3] == le and bo[5] == le and bo[7] == le)
@@ -43,94 +43,157 @@ def on_click(row, col):
     update_display()
 
 
-def playerMove():
-    run = True
-    while run:
-        move = input('Please select a position to place an \'X\' (1-9): ')
-        try:
-            move = int(move)
-            if move > 0 and move < 10:
-                if spaceIsFree(move):
-                    run = False
-                    insertLetter('X', move)
-                else:
-                    print('Sorry, this space is occupied!')
-            else:
-                print('Please type a number within the range!')
-        except:
-            print('Please type a number!')
-            
-    update_display()
-
-
 # def playerMove():
 #     run = True
-#     move = 0  # Initialize move to 0
-    
-#     # Function to handle the click event for player move
-#     def on_click_player(row, col):
-#         nonlocal move
-#         cell_number = row * 3 + col + 1
-#         if spaceIsFree(cell_number):
-#             move = cell_number
-#             run = False
-#             insertLetter('X', move)
-#             update_display()
-    
-#     # Bind the click event to the labels for player move
-#     for i in range(3):
-#         for j in range(3):
-#             labels[i][j].bind("<Button-1>", lambda event, row=i, col=j: on_click_player(row, col))
-    
-#     # Wait until a valid move is made by the player
-#     window.mainloop()
-    
-#     # Unbind the click event from the labels
-#     for i in range(3):
-#         for j in range(3):
-#             labels[i][j].unbind("<Button-1>")
-    
-#     # Check if a valid move was made
-#     if move > 0:
-#         run = False
-#     else:
-#         print('Please select a valid position!')
-
+#     while run:
+#         move = input('Please select a position to place an \'X\' (1-9): ')
+#         try:
+#             move = int(move)
+#             if move > 0 and move < 10:
+#                 if spaceIsFree(move):
+#                     run = False
+#                     insertLetter('X', move)
+#                 else:
+#                     print('Sorry, this space is occupied!')
+#             else:
+#                 print('Please type a number within the range!')
+#         except:
+#             print('Please type a number!')
             
-def compMove():
-    possibleMoves = [x for x, letter in enumerate(board) if letter == ' ' and x != 0]
-    move = 0
+#     update_display()
 
-    for let in ['O', 'X']:
-        for i in possibleMoves:
-            boardCopy = board[:]
-            boardCopy[i] = let
-            if isWinner(boardCopy, let):
-                move = i
-                return move
 
-    cornersOpen = []
-    for i in possibleMoves:
-        if i in [1,3,7,9]:
-            cornersOpen.append(i)
+def playerMove():
+    run = True
+    move = 0  # Initialize move to 0
+    
+    # Function to handle the click event for player move
+    def on_click_player(row, col):
+        nonlocal move
+        cell_number = row * 3 + col + 1
+        if spaceIsFree(cell_number):
+            move = cell_number
+            run = False
+            insertLetter('X', move)
+            update_display()
+            window.quit()  # Exit the event loop
+    
+    # Bind the click event to the labels for player move
+    for i in range(3):
+        for j in range(3):
+            labels[i][j].bind("<Button-1>", lambda event, row=i, col=j: on_click_player(row, col))
+    
+    # Wait until a valid move is made by the player
+    window.mainloop()
+    
+    # Unbind the click event from the labels
+    for i in range(3):
+        for j in range(3):
+            labels[i][j].unbind("<Button-1>")
+    
+
+    # Check if a valid move was made
+    if(move>0):
+        print(move)
+        if spaceIsFree(move):
+            run = False
+            insertLetter('X', move)
+        else:
+            print('Sorry, this space is occupied!')
             
-    if len(cornersOpen) > 0:
-        move = selectRandom(cornersOpen)
-        return move
+###BASIC AGENTS' STRATEGY###  
+# def compMove():
+#     possibleMoves = [x for x, letter in enumerate(board) if letter == ' ' and x != 0]
+#     move = 0
 
-    if 5 in possibleMoves:
-        move = 5
-        return move
+#     for let in ['O', 'X']:
+#         for i in possibleMoves:
+#             boardCopy = board[:]
+#             boardCopy[i] = let
+#             if isWinner(boardCopy, let):
+#                 move = i
+#                 return move
 
-    edgesOpen = []
-    for i in possibleMoves:
-        if i in [2,4,6,8]:
-            edgesOpen.append(i)
+#     cornersOpen = []
+#     for i in possibleMoves:
+#         if i in [1,3,7,9]:
+#             cornersOpen.append(i)
             
-    if len(edgesOpen) > 0:
-        move = selectRandom(edgesOpen)
+#     if len(cornersOpen) > 0:
+#         move = selectRandom(cornersOpen)
+#         return move
+
+#     if 5 in possibleMoves:
+#         move = 5
+#         return move
+
+#     edgesOpen = []
+#     for i in possibleMoves:
+#         if i in [2,4,6,8]:
+#             edgesOpen.append(i)
+            
+#     if len(edgesOpen) > 0:
+#         move = selectRandom(edgesOpen)
         
-    return move
+#     return move
+
+def compMove():
+    bestScore = float('-inf')
+    bestMove = None
+    
+    for move in range(1, 10):
+        if spaceIsFree(move):
+            board[move] = 'O'
+            score = minimax(board, 0, False, float('-inf'), float('inf'))
+            board[move] = ' '
+            
+            if score > bestScore:
+                bestScore = score
+                bestMove = move
+                
+    return bestMove
+
+def minimax(board, depth, isMaximizingPlayer, alpha, beta):
+    scores = {
+        'X': -1,
+        'O': 1,
+        'tie': 0
+    }
+    
+    if isWinner(board, 'X'):
+        return scores['X']
+    
+    if isWinner(board, 'O'):
+        return scores['O']
+    
+    if isBoardFull(board):
+        return scores['tie']
+    
+    if isMaximizingPlayer:
+        bestScore = float('-inf')
+        for move in range(1, 10):
+            if spaceIsFree(move):
+                board[move] = 'O'
+                score = minimax(board, depth + 1, False, alpha, beta)
+                board[move] = ' '
+                bestScore = max(score, bestScore)
+                alpha = max(alpha, bestScore)
+                if beta <= alpha:
+                    break
+        return bestScore
+    else:
+        bestScore = float('inf')
+        for move in range(1, 10):
+            if spaceIsFree(move):
+                board[move] = 'X'
+                score = minimax(board, depth + 1, True, alpha, beta)
+                board[move] = ' '
+                bestScore = min(score, bestScore)
+                beta = min(beta, bestScore)
+                if beta <= alpha:
+                    break
+        return bestScore
+
 
 def selectRandom(li):
     import random
@@ -192,17 +255,15 @@ for i in range(3):
         labels[i][j].grid(row=i, column=j)
 
 
-# Bind the click event to the labels
-for i in range(3):
-    for j in range(3):
-        labels[i][j].bind("<Button-1>", lambda event, row=i, col=j: on_click(row, col))
+# # Bind the click event to the labels
+# for i in range(3):
+#     for j in range(3):
+#         labels[i][j].bind("<Button-1>", lambda event, row=i, col=j: on_click(row, col))
 
 
 def main():
     print('Welcome to Tic Tac Toe!')
     
-    
-
     printBoard(board)
     update_display()
     while not(isBoardFull(board)):
@@ -213,7 +274,7 @@ def main():
             print('Sorry, O\'s won this time!')
             break
 
-        if not(isWinner(board, 'X')):
+        if not(isWinner(board, 'X') or isBoardFull(board)):
             move = compMove()
             if move == 0:
                 print('Tie Game!')
@@ -230,6 +291,13 @@ def main():
         print('Tie Game!')
 
 while True:
+
+    #### Without asking to start ###
+    # board = [' ' for x in range(10)]
+    # main()
+
+    
+    #### With asking to start ###
     answer = input('Do you want to play again? (Y/N)')
     if answer.lower() == 'y' or answer.lower == 'yes':
         board = [' ' for x in range(10)]
